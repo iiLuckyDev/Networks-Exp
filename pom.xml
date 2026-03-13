@@ -53,6 +53,9 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <paper.nms.version>1.21.11-SNAPSHOT</paper.nms.version>
+        <paper.api.version>1.21.11-R0.1-SNAPSHOT</paper.api.version>
+        <paper.nms.jar>${project.basedir}/.paper-nms/1.21.11/mapped_1.21.11.jar</paper.nms.jar>
         <sonar.projectKey>Networks</sonar.projectKey>
         <sonar.organization>sefiraat</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -153,28 +156,23 @@
         <dependency>
             <groupId>ca.bkaw</groupId>
             <artifactId>paper-nms</artifactId>
-            <version>1.21.8-SNAPSHOT</version>
-            <scope>provided</scope>
+            <version>${paper.nms.version}</version>
+            <scope>system</scope>
+            <systemPath>${paper.nms.jar}</systemPath>
         </dependency>
 
         <!-- Core -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.9-R0.1-SNAPSHOT</version>
+            <version>${paper.api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.Slimefun</groupId>
-            <artifactId>Slimefun4</artifactId>
-            <version>experimental-SNAPSHOT</version>
+            <groupId>local.slimefun5</groupId>
+            <artifactId>Slimefun5</artifactId>
+            <version>5.0.3-local</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.spigotmc</groupId>
-                    <artifactId>spigot-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>dev.sefiraat</groupId>
