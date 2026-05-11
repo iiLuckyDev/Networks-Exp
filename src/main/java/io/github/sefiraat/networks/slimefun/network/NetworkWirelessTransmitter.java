@@ -1,6 +1,7 @@
 package io.github.sefiraat.networks.slimefun.network;
 
 import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
@@ -125,7 +126,9 @@ public class NetworkWirelessTransmitter extends NetworkObject {
     private void onTick(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
@@ -153,19 +156,19 @@ public class NetworkWirelessTransmitter extends NetworkObject {
                 return;
             }
 
-            if (definition.getNode().getRoot().getRootPower() < REQUIRED_POWER) {
+            if (root.getRootPower() < REQUIRED_POWER) {
                 return;
             }
 
-            final ItemStack stackToPush = definition.getNode().getRoot().getItemStack0(
+            final ItemStack stackToPush = root.getItemStack0(
                     blockMenu.getLocation(),
                     new ItemRequest(templateStack.clone(), templateStack.getMaxStackSize())
             );
 
             if (stackToPush != null) {
-                definition.getNode().getRoot().removeRootPower(REQUIRED_POWER);
+                root.removeRootPower(REQUIRED_POWER);
                 linkedBlockMenu.pushItem(stackToPush, NetworkWirelessReceiver.RECEIVED_SLOT);
-                if (definition.getNode().getRoot().isDisplayParticles()) {
+                if (root.isDisplayParticles()) {
                     final Location particleLocation = blockMenu.getLocation().clone().add(0.5, 1.1, 0.5);
                     final Location particleLocation2 = linkedBlockMenu.getLocation().clone().add(0.5, 2.1, 0.5);
                     particleLocation.getWorld().spawnParticle(

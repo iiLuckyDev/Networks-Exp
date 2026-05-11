@@ -116,7 +116,7 @@ public class NetworkController extends NetworkObject {
 
             NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(nodeLocation);
 
-            if (definition != null && definition.getNode() != null && definition.getNode().getRoot() == previousRoot) {
+            if (definition != null && definition.getRoot() == previousRoot) {
                 definition.setNode(null);
             }
         }

@@ -43,11 +43,12 @@ public class CircuitBreakerListener implements Listener {
     private void invalidateNetwork(@Nonnull Location location) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(location);
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
-        final NetworkRoot root = definition.getNode().getRoot();
         final Location controller = root.getController();
 
         if (controller != null) {
@@ -57,7 +58,7 @@ public class CircuitBreakerListener implements Listener {
         for (Location nodeLocation : root.getNodeLocations()) {
             final NodeDefinition nodeDefinition = NetworkStorage.getAllNetworkObjects().get(nodeLocation);
 
-            if (nodeDefinition != null && nodeDefinition.getNode() != null && nodeDefinition.getNode().getRoot() == root) {
+            if (nodeDefinition != null && nodeDefinition.getRoot() == root) {
                 nodeDefinition.setNode(null);
             }
         }

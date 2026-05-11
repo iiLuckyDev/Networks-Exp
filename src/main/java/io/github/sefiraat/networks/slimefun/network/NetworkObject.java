@@ -129,8 +129,8 @@ public abstract class NetworkObject extends SlimefunItem implements AdminDebugga
                 }
 
                 // There is a definition, if it has a node, then it's part of an active network.
-                if (definition.getNode() != null) {
-                    NetworkRoot networkRoot = definition.getNode().getRoot();
+                NetworkRoot networkRoot = definition.getRoot();
+                if (networkRoot != null) {
                     if (controllerLocation == null) {
                         // First network found, store root location
                         controllerLocation = networkRoot.getController();

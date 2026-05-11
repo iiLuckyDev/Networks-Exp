@@ -425,8 +425,7 @@ public abstract class AbstractGrid extends NetworkObject {
             @Nullable ItemStack itemStack,
             ClickAction action,
             BlockMenu blockMenu) {
-        NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
-        if (definition == null || definition.getNode() == null || getActiveRoot(blockMenu) != root) {
+        if (getActiveRoot(blockMenu) != root) {
             clearDisplay(blockMenu);
             blockMenu.close();
             return;
