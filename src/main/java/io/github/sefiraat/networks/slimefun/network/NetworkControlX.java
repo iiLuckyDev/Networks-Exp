@@ -4,6 +4,7 @@ import dev.sefiraat.sefilib.misc.ParticleUtils;
 import dev.sefiraat.sefilib.world.LocationUtils;
 import io.github.sefiraat.networks.NetworkStorage;
 import io.github.sefiraat.networks.Networks;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.sefiraat.networks.utils.ItemCreator;
@@ -74,11 +75,13 @@ public class NetworkControlX extends NetworkDirectional {
     private void tryBreakBlock(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
-        if (definition.getNode().getRoot().getRootPower() < REQUIRED_POWER) {
+        if (root.getRootPower() < REQUIRED_POWER) {
             return;
         }
 
@@ -143,7 +146,7 @@ public class NetworkControlX extends NetworkDirectional {
 
         final ItemStack resultStack = new ItemStack(material, 1);
 
-        definition.getNode().getRoot().addItemStack0(blockMenu.getBlock().getLocation(), resultStack);
+        root.addItemStack0(blockMenu.getBlock().getLocation(), resultStack);
 
         if (resultStack.getAmount() == 0) {
             CraftBlock cb = ((CraftBlock) targetBlock);
@@ -164,7 +167,7 @@ public class NetworkControlX extends NetworkDirectional {
                         DUST_OPTIONS
                 );
 
-                definition.getNode().getRoot().removeRootPower(REQUIRED_POWER);
+                root.removeRootPower(REQUIRED_POWER);
             });
         }
     }

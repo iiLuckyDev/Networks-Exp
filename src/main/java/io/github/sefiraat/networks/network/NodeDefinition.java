@@ -25,6 +25,11 @@ public class NodeDefinition {
         return node;
     }
 
+    public NetworkRoot getRoot() {
+        final NetworkNode currentNode = node;
+        return currentNode == null ? null : currentNode.getRoot();
+    }
+
     public void setNode(NetworkNode node) {
         this.node = node;
     }

@@ -3,6 +3,7 @@ package io.github.sefiraat.networks.network;
 public enum NodeType {
     CONTROLLER,
     BRIDGE,
+    CIRCUIT_BREAKER,
     STORAGE_MONITOR,
     IMPORT,
     EXPORT,

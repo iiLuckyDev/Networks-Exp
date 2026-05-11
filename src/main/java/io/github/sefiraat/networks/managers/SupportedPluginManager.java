@@ -9,6 +9,7 @@ public class SupportedPluginManager {
     private static SupportedPluginManager instance;
 
     private final boolean infinityExpansion;
+    private boolean fluffyMachines;
     private final boolean netheopoiesis;
     private final boolean slimeHud;
 
@@ -22,6 +23,7 @@ public class SupportedPluginManager {
         Preconditions.checkArgument(instance == null, "Cannot instantiate class");
         instance = this;
         this.infinityExpansion = Bukkit.getPluginManager().isPluginEnabled("InfinityExpansion");
+        this.fluffyMachines = Bukkit.getPluginManager().isPluginEnabled("FluffyMachines");
         this.netheopoiesis = Bukkit.getPluginManager().isPluginEnabled("Netheopoiesis");
         this.slimeHud = Bukkit.getPluginManager().isPluginEnabled("SlimeHUD");
         Networks.getInstance()
@@ -41,6 +43,11 @@ public class SupportedPluginManager {
 
     public boolean isInfinityExpansion() {
         return infinityExpansion;
+    }
+
+    public boolean isFluffyMachines() {
+        this.fluffyMachines = this.fluffyMachines || Bukkit.getPluginManager().isPluginEnabled("FluffyMachines");
+        return fluffyMachines;
     }
 
     public boolean isNetheopoiesis() {

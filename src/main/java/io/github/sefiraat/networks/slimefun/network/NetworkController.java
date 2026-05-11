@@ -23,11 +23,12 @@ import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkController extends NetworkObject {
 
     private static final String CRAYON = "crayon";
-    private static final Map<Location, NetworkRoot> NETWORKS = new HashMap<>();
+    private static final Map<Location, NetworkRoot> NETWORKS = new ConcurrentHashMap<>();
     @Getter
     private static final Set<Location> CRAYONS = new HashSet<>();
     protected final Map<Location, Boolean> firstTickMap = new HashMap<>();
@@ -43,7 +44,7 @@ public class NetworkController extends NetworkObject {
                 new BlockTicker() {
                     @Override
                     public boolean isSynchronized() {
-                        return false;
+                        return true;
                     }
 
                     @Override
@@ -52,6 +53,8 @@ public class NetworkController extends NetworkObject {
                             onFirstTick(block, data);
                             firstTickMap.put(block.getLocation(), true);
                         }
+
+                        final NetworkRoot previousRoot = NETWORKS.get(block.getLocation());
 
                         addToRegistry(block);
                         NetworkRoot networkRoot = new NetworkRoot(block.getLocation(), NodeType.CONTROLLER, maxNodes.getValue());
@@ -68,6 +71,7 @@ public class NetworkController extends NetworkObject {
                         }
 
                         NETWORKS.put(block.getLocation(), networkRoot);
+                        clearStaleNetworkNodes(previousRoot, networkRoot);
                     }
                 }
         );
@@ -94,8 +98,26 @@ public class NetworkController extends NetworkObject {
     public static void wipeNetwork(@Nonnull Location location) {
         NetworkRoot networkRoot = NETWORKS.remove(location);
         if (networkRoot != null) {
-            for (NetworkNode node : networkRoot.getChildrenNodes()) {
-                NetworkStorage.removeNode(node.getNodePosition());
+            for (Location nodeLocation : networkRoot.getNodeLocations()) {
+                NetworkStorage.removeNode(nodeLocation);
+            }
+        }
+    }
+
+    private static void clearStaleNetworkNodes(NetworkRoot previousRoot, @Nonnull NetworkRoot newRoot) {
+        if (previousRoot == null) {
+            return;
+        }
+
+        for (Location nodeLocation : previousRoot.getNodeLocations()) {
+            if (newRoot.getNodeLocations().contains(nodeLocation)) {
+                continue;
+            }
+
+            NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(nodeLocation);
+
+            if (definition != null && definition.getNode() != null && definition.getNode().getRoot() == previousRoot) {
+                definition.setNode(null);
             }
         }
     }

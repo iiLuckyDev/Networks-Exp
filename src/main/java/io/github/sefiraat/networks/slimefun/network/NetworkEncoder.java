@@ -96,11 +96,12 @@ public class NetworkEncoder extends NetworkObject {
     public void tryEncode(@Nonnull Player player, @Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
-        final NetworkRoot root = definition.getNode().getRoot();
         final long networkCharge = root.getRootPower();
 
         if (networkCharge < CHARGE_COST) {

@@ -1,8 +1,7 @@
 package io.github.sefiraat.networks.slimefun.network.grid;
 
-import io.github.sefiraat.networks.NetworkStorage;
 import io.github.sefiraat.networks.network.GridItemRequest;
-import io.github.sefiraat.networks.network.NodeDefinition;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.SupportedRecipes;
 import io.github.sefiraat.networks.slimefun.NetworkSlimefunItems;
 import io.github.sefiraat.networks.utils.ItemCreator;
@@ -192,9 +191,8 @@ public class NetworkCraftingGrid extends AbstractGrid {
     }
 
     private void tryCraft(@Nonnull BlockMenu menu, @Nonnull Player player) {
-        // Get node and, if it doesn't exist - escape
-        final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(menu.getLocation());
-        if (definition.getNode() == null) {
+        final NetworkRoot root = getActiveRoot(menu);
+        if (root == null) {
             return;
         }
 
@@ -242,7 +240,7 @@ public class NetworkCraftingGrid extends AbstractGrid {
                 if (menu.getItemInSlot(recipeSlot) == null) {
                     // Process item request
                     final GridItemRequest request = new GridItemRequest(itemInSlotClone, 1, player);
-                    final ItemStack requestingStack = definition.getNode().getRoot().getItemStack0(menu.getLocation(), request);
+                    final ItemStack requestingStack = root.getItemStack0(menu.getLocation(), request);
                     if (requestingStack != null) {
                         menu.replaceExistingItem(recipeSlot, requestingStack);
                     }
@@ -252,10 +250,8 @@ public class NetworkCraftingGrid extends AbstractGrid {
     }
 
     private void tryReturnItems(@Nonnull BlockMenu menu) {
-        // Get node and, if it doesn't exist - escape
-        final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(menu.getLocation());
-
-        if (definition.getNode() == null) {
+        final NetworkRoot root = getActiveRoot(menu);
+        if (root == null) {
             return;
         }
 
@@ -265,7 +261,7 @@ public class NetworkCraftingGrid extends AbstractGrid {
             if (stack == null || stack.getType() == Material.AIR) {
                 continue;
             }
-            definition.getNode().getRoot().addItemStack(stack);
+            root.addItemStack0(menu.getLocation(), stack);
         }
     }
 }

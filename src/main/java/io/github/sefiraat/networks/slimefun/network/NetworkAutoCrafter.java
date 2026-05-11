@@ -93,11 +93,11 @@ public class NetworkAutoCrafter extends NetworkObject {
 
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
-
-        final NetworkRoot root = definition.getNode().getRoot();
 
         if (!this.withholding) {
             final ItemStack stored = blockMenu.getItemInSlot(OUTPUT_SLOT);

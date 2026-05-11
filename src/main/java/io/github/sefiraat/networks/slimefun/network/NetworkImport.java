@@ -1,6 +1,7 @@
 package io.github.sefiraat.networks.slimefun.network;
 
 import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.sefiraat.networks.slimefun.NetworkSlimefunItems;
@@ -71,7 +72,9 @@ public class NetworkImport extends NetworkObject {
     private void tryAddItem(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
@@ -81,7 +84,7 @@ public class NetworkImport extends NetworkObject {
             if (itemStack == null || itemStack.getType() == Material.AIR) {
                 continue;
             }
-            definition.getNode().getRoot().addItemStack0(blockMenu.getLocation(), itemStack);
+            root.addItemStack0(blockMenu.getLocation(), itemStack);
         }
     }
 

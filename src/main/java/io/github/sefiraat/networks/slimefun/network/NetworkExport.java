@@ -1,6 +1,7 @@
 package io.github.sefiraat.networks.slimefun.network;
 
 import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
@@ -97,7 +98,9 @@ public class NetworkExport extends NetworkObject {
     private void tryFetchItem(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
@@ -111,7 +114,7 @@ public class NetworkExport extends NetworkObject {
         ItemStack clone = testItem.clone();
 
         ItemRequest itemRequest = new ItemRequest(clone, clone.getMaxStackSize());
-        ItemStack retrieved = definition.getNode().getRoot().getItemStack0(blockMenu.getLocation(), itemRequest);
+        ItemStack retrieved = root.getItemStack0(blockMenu.getLocation(), itemRequest);
         if (retrieved != null) {
             blockMenu.pushItem(retrieved, OUTPUT_ITEM_SLOT);
         }

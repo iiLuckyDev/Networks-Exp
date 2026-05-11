@@ -2,6 +2,7 @@ package io.github.sefiraat.networks.slimefun.network;
 
 import com.cryptomorin.xseries.particles.XParticle;
 import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
@@ -90,7 +91,9 @@ public class NetworkPurger extends NetworkObject {
     private void tryKillItem(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
@@ -104,11 +107,11 @@ public class NetworkPurger extends NetworkObject {
         clone.setAmount(1);
 
         ItemRequest itemRequest = new ItemRequest(clone, clone.getMaxStackSize());
-        ItemStack retrieved = definition.getNode().getRoot().getItemStack0(blockMenu.getLocation(), itemRequest);
+        ItemStack retrieved = root.getItemStack0(blockMenu.getLocation(), itemRequest);
         if (retrieved != null) {
             retrieved.setAmount(0);
             Location location = blockMenu.getLocation().clone().add(0.5, 1.2, 0.5);
-            if (definition.getNode().getRoot().isDisplayParticles()) {
+            if (root.isDisplayParticles()) {
                 location.getWorld().spawnParticle(XParticle.SMOKE.get(), location, 0, 0, 0.05, 0);
             }
         }

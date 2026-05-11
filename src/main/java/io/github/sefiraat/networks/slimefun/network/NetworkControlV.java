@@ -5,6 +5,7 @@ import dev.sefiraat.sefilib.misc.ParticleUtils;
 import dev.sefiraat.sefilib.world.LocationUtils;
 import io.github.sefiraat.networks.NetworkStorage;
 import io.github.sefiraat.networks.Networks;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.managers.SupportedPluginManager;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
@@ -76,11 +77,13 @@ public class NetworkControlV extends NetworkDirectional {
     private void tryPasteBlock(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
-        if (definition.getNode().getRoot().getRootPower() < REQUIRED_POWER) {
+        if (root.getRootPower() < REQUIRED_POWER) {
             return;
         }
 
@@ -122,7 +125,7 @@ public class NetworkControlV extends NetworkDirectional {
         }
 
         final ItemRequest request = new ItemRequest(templateStack.clone(), 1);
-        final ItemStack fetchedStack = definition.getNode().getRoot().getItemStack0(blockMenu.getLocation(), request);
+        final ItemStack fetchedStack = root.getItemStack0(blockMenu.getLocation(), request);
 
         if (fetchedStack == null || fetchedStack.getAmount() < 1) {
             return;

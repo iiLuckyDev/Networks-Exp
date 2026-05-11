@@ -3,6 +3,8 @@ package io.github.sefiraat.networks.network;
 import io.github.sefiraat.networks.NetworkStorage;
 import io.github.sefiraat.networks.Networks;
 import io.github.sefiraat.networks.slimefun.network.NetworkController;
+import io.github.sefiraat.networks.slimefun.network.NetworkCircuitBreaker;
+import io.github.sefiraat.networks.slimefun.network.NetworkObject;
 import io.github.sefiraat.networks.slimefun.network.NetworkPowerNode;
 import io.github.sefiraat.networks.utils.NetworkUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -84,10 +86,15 @@ public class NetworkNode {
     }
 
     public void addAllChildren() {
+        if (this.nodeType == NodeType.CIRCUIT_BREAKER
+                && !NetworkCircuitBreaker.allowsTraversal(this.nodePosition)) {
+            return;
+        }
+
         // Loop through all possible locations
         for (BlockFace face : VALID_FACES) {
             final Location testLocation = this.nodePosition.clone().add(face.getDirection());
-            final NodeDefinition testDefinition = NetworkStorage.getAllNetworkObjects().get(testLocation);
+            final NodeDefinition testDefinition = getOrCreateDefinition(testLocation);
 
             if (testDefinition == null) {
                 continue;
@@ -127,6 +134,22 @@ public class NetworkNode {
             Networks.getControllersSet().add(location);
             NetworkUtils.clearNetwork(location);
         }
+    }
+
+    private NodeDefinition getOrCreateDefinition(@Nonnull Location location) {
+        if (!(BlockStorage.check(location) instanceof NetworkObject networkObject)) {
+            NetworkStorage.removeNode(location);
+            return null;
+        }
+
+        NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(location);
+
+        if (definition == null || definition.getType() != networkObject.getNodeType()) {
+            definition = new NodeDefinition(networkObject.getNodeType());
+            NetworkStorage.getAllNetworkObjects().put(location, definition);
+        }
+
+        return definition;
     }
 
     protected long retrieveBlockCharge() {

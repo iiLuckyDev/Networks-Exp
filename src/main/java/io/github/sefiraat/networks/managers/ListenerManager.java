@@ -2,6 +2,7 @@ package io.github.sefiraat.networks.managers;
 
 import io.github.sefiraat.networks.Networks;
 import io.github.sefiraat.networks.listeners.BlockStateRefreshListener;
+import io.github.sefiraat.networks.listeners.CircuitBreakerListener;
 import io.github.sefiraat.networks.listeners.ExplosiveToolListener;
 import io.github.sefiraat.networks.listeners.SyncListener;
 import org.bukkit.event.Listener;
@@ -12,6 +13,7 @@ public class ListenerManager {
         addListener(new ExplosiveToolListener());
         addListener(new SyncListener());
         addListener(new BlockStateRefreshListener());
+        addListener(new CircuitBreakerListener());
     }
 
     private void addListener(Listener listener) {

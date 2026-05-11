@@ -1,6 +1,8 @@
 package io.github.sefiraat.networks.slimefun.network;
 
 import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkNode;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
@@ -37,10 +39,13 @@ public class NetworkGrabber extends NetworkDirectional {
     private void tryGrabItem(@Nonnull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkNode node = definition == null ? null : definition.getNode();
+
+        if (node == null) {
             return;
         }
 
+        final NetworkRoot root = node.getRoot();
         final BlockFace direction = this.getCurrentDirection(blockMenu);
         final BlockMenu targetMenu = BlockStorage.getInventory(blockMenu.getBlock().getRelative(direction));
 
@@ -55,8 +60,8 @@ public class NetworkGrabber extends NetworkDirectional {
 
             if (itemStack != null && itemStack.getType() != Material.AIR) {
                 int before = itemStack.getAmount();
-                definition.getNode().getRoot().addItemStack0(blockMenu.getLocation(), itemStack);
-                if (definition.getNode().getRoot().isDisplayParticles() && itemStack.getAmount() < before) {
+                root.addItemStack0(blockMenu.getLocation(), itemStack);
+                if (root.isDisplayParticles() && itemStack.getAmount() < before) {
                     showParticle(blockMenu.getLocation(), direction);
                 }
                 break;

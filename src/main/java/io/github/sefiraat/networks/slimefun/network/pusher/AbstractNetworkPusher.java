@@ -2,6 +2,8 @@ package io.github.sefiraat.networks.slimefun.network.pusher;
 
 import com.balugaq.netex.utils.BlockMenuUtil;
 import io.github.sefiraat.networks.NetworkStorage;
+import io.github.sefiraat.networks.network.NetworkNode;
+import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
 import io.github.sefiraat.networks.network.stackcaches.ItemRequest;
@@ -59,10 +61,13 @@ public abstract class AbstractNetworkPusher extends NetworkDirectional {
     private void tryPushItem(@NotNull BlockMenu blockMenu) {
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkNode node = definition == null ? null : definition.getNode();
+
+        if (node == null) {
             return;
         }
 
+        final NetworkRoot root = node.getRoot();
 
         final BlockFace direction = getCurrentDirection(blockMenu);
         final BlockMenu targetMenu = BlockStorage.getInventory(
@@ -99,10 +104,10 @@ public abstract class AbstractNetworkPusher extends NetworkDirectional {
                 }
 
                 ItemStack retrieved =
-                        definition.getNode().getRoot().getItemStack0(blockMenu.getLocation(), itemRequest);
+                        root.getItemStack0(blockMenu.getLocation(), itemRequest);
                 if (retrieved != null) {
                     BlockMenuUtil.pushItem(targetMenu, retrieved, slots);
-                    if (definition.getNode().getRoot().isDisplayParticles()) {
+                    if (root.isDisplayParticles()) {
                         showParticle(blockMenu.getLocation(), direction);
                     }
                 }

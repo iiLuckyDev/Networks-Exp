@@ -72,12 +72,13 @@ public class NetworkPowerDisplay extends NetworkObject {
         if (blockMenu.hasViewer()) {
             final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(blockMenu.getLocation());
 
-            if (definition.getNode() == null) {
+            final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+            if (root == null) {
                 blockMenu.replaceExistingItem(DISPLAY_SLOT, EMPTY);
                 return;
             }
 
-            final NetworkRoot root = definition.getNode().getRoot();
             final long networkCharge = root.getRootPower();
             blockMenu.replaceExistingItem(DISPLAY_SLOT, getChargeStack(networkCharge));
         }

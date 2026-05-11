@@ -55,6 +55,7 @@ public class NetworksSlimefunItemStacks {
     public static final SlimefunItemStack NETWORK_BRIDGE_GREEN;
     public static final SlimefunItemStack NETWORK_BRIDGE_RED;
     public static final SlimefunItemStack NETWORK_BRIDGE_BLACK;
+    public static final SlimefunItemStack NETWORK_CIRCUIT_BREAKER;
     public static final SlimefunItemStack NETWORK_MONITOR;
     public static final SlimefunItemStack NETWORK_IMPORT;
     public static final SlimefunItemStack NETWORK_EXPORT;
@@ -392,6 +393,20 @@ public class NetworksSlimefunItemStacks {
                 "connect network objects together.",
                 "",
                 "Black version of network bridge"
+        );
+
+        NETWORK_CIRCUIT_BREAKER = Theme.themedSlimefunItemStack(
+                "NTW_CIRCUIT_BREAKER",
+                new ItemStack(Material.DROPPER),
+                Theme.MACHINE,
+                "Network Circuit Breaker",
+                "A controllable bridge point that",
+                "can disconnect anything beyond it",
+                "from the rest of the network.",
+                "",
+                "Power it with redstone to let",
+                "the network pass through. Without",
+                "power, the branch is disconnected."
         );
 
         NETWORK_MONITOR = Theme.themedSlimefunItemStack(

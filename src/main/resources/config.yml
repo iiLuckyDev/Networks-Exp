@@ -1,1 +1,13 @@
+# Networks config.yml
+# config-version tracks changes to this file's structure.
+# When it changes, Networks will back up your current config to
+# plugins/Networks/config-backups/ before merging in any new settings.
+
+config-version: 3
+
+options:
+  # Enable or disable Slimefun addon researches for Networks items.
+  addon-researches: false
+
+# Automatically update dev builds.
 auto-update: true

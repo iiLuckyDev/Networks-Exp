@@ -48,6 +48,7 @@ public class NetworkSlimefunItems {
     public static final NetworkBridge NETWORK_BRIDGE_GREEN;
     public static final NetworkBridge NETWORK_BRIDGE_RED;
     public static final NetworkBridge NETWORK_BRIDGE_BLACK;
+    public static final NetworkCircuitBreaker NETWORK_CIRCUIT_BREAKER;
     public static final NetworkMonitor NETWORK_MONITOR;
     public static final NetworkImport NETWORK_IMPORT;
     public static final NetworkExport NETWORK_EXPORT;
@@ -425,6 +426,17 @@ public class NetworkSlimefunItems {
                         OPTIC_GLASS.getItem(), new ItemStack(Material.BLACK_STAINED_GLASS), OPTIC_GLASS.getItem()
                 ),
                 Converter.getItem(NetworksSlimefunItemStacks.NETWORK_BRIDGE_BLACK, 8)
+        );
+
+        NETWORK_CIRCUIT_BREAKER = new NetworkCircuitBreaker(
+                NetworksItemGroups.NETWORK_ITEMS,
+                NetworksSlimefunItemStacks.NETWORK_CIRCUIT_BREAKER,
+                RecipeType.ENHANCED_CRAFTING_TABLE,
+                makeRecipe(
+                        OPTIC_GLASS.getItem(), new ItemStack(Material.REDSTONE), OPTIC_GLASS.getItem(),
+                        OPTIC_CABLE.getItem(), NETWORK_BRIDGE.getItem(), OPTIC_CABLE.getItem(),
+                        OPTIC_GLASS.getItem(), new ItemStack(Material.LEVER), OPTIC_GLASS.getItem()
+                )
         );
 
         NETWORK_MONITOR = new NetworkMonitor(
@@ -1044,6 +1056,7 @@ public class NetworkSlimefunItems {
         NETWORK_BRIDGE_GREEN.register(plugin);
         NETWORK_BRIDGE_RED.register(plugin);
         NETWORK_BRIDGE_BLACK.register(plugin);
+        NETWORK_CIRCUIT_BREAKER.register(plugin);
         NETWORK_MONITOR.register(plugin);
         NETWORK_IMPORT.register(plugin);
         NETWORK_EXPORT.register(plugin);

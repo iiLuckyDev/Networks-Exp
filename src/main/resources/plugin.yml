@@ -9,6 +9,7 @@ depend:
   - Slimefun
 softdepend:
   - InfinityExpansion
+  - FluffyMachines
   - Netheopoiesis
   - SlimeHUD
   - WildChests

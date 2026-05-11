@@ -4,6 +4,7 @@ import io.github.sefiraat.networks.NetworkStorage;
 import io.github.sefiraat.networks.network.NetworkRoot;
 import io.github.sefiraat.networks.network.NodeDefinition;
 import io.github.sefiraat.networks.network.NodeType;
+import io.github.sefiraat.networks.utils.NetworkUtils;
 import io.github.thebusybiscuit.slimefun4.api.events.PlayerRightClickEvent;
 import io.github.thebusybiscuit.slimefun4.api.items.ItemGroup;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
@@ -104,11 +105,7 @@ public abstract class NetworkObject extends SlimefunItem implements AdminDebugga
                 blockMenu.dropItems(location, i);
             }
         }
-//        NetworkStorage.removeNode(location);
-//
-//        if (this.nodeType == NodeType.CONTROLLER) {
-//            NetworkController.wipeNetwork(location);
-//        }
+        NetworkUtils.clearNetwork(location);
 
         BlockStorage.clearBlockInfo(location);
     }

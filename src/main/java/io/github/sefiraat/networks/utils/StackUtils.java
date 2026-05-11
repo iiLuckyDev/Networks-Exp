@@ -50,9 +50,13 @@ public class StackUtils {
             return itemStack.hasItemMeta() == cache.getItemStack().hasItemMeta();
         }
 
-        // Now we need to compare meta's directly - cache is already out, but let's fetch the 2nd meta also
+        // Some addon items can still surface a null meta here, so compare the resolved metas directly before
+        // accessing any meta-specific data.
         final ItemMeta itemMeta = itemStack.getItemMeta();
         final ItemMeta cachedMeta = cache.getItemMeta();
+        if (itemMeta == null || cachedMeta == null) {
+            return itemMeta == null && cachedMeta == null;
+        }
 
         // ItemMetas are different types and cannot match
         if (!itemMeta.getClass().equals(cachedMeta.getClass())) {

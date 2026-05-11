@@ -41,7 +41,9 @@ public class NetworkPowerOutlet extends NetworkDirectional {
 
         final NodeDefinition definition = NetworkStorage.getAllNetworkObjects().get(b.getLocation());
 
-        if (definition == null || definition.getNode() == null) {
+        final NetworkRoot root = definition == null ? null : definition.getRoot();
+
+        if (root == null) {
             return;
         }
 
@@ -67,7 +69,6 @@ public class NetworkPowerOutlet extends NetworkDirectional {
         }
 
         final int possibleGeneration = Math.min(rate, space);
-        final NetworkRoot root = definition.getNode().getRoot();
         final long power = root.getRootPower();
 
         if (power <= 0) {
