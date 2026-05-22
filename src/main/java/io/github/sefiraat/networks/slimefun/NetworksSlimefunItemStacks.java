@@ -56,6 +56,7 @@ public class NetworksSlimefunItemStacks {
     public static final SlimefunItemStack NETWORK_BRIDGE_RED;
     public static final SlimefunItemStack NETWORK_BRIDGE_BLACK;
     public static final SlimefunItemStack NETWORK_CIRCUIT_BREAKER;
+    public static final SlimefunItemStack NETWORK_STORAGE_INDICATOR;
     public static final SlimefunItemStack NETWORK_MONITOR;
     public static final SlimefunItemStack NETWORK_IMPORT;
     public static final SlimefunItemStack NETWORK_EXPORT;
@@ -407,6 +408,17 @@ public class NetworksSlimefunItemStacks {
                 "Power it with redstone to let",
                 "the network pass through. Without",
                 "power, the branch is disconnected."
+        );
+
+        NETWORK_STORAGE_INDICATOR = Theme.themedSlimefunItemStack(
+                "NTW_STORAGE_INDICATOR",
+                new ItemStack(Material.REDSTONE_LAMP),
+                Theme.MACHINE,
+                "Storage Indicator",
+                "Lights up when any monitored",
+                "storage in its connected network",
+                "falls below its configured",
+                "item threshold."
         );
 
         NETWORK_MONITOR = Theme.themedSlimefunItemStack(

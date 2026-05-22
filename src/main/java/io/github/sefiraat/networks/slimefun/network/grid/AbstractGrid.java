@@ -51,11 +51,6 @@ public abstract class AbstractGrid extends NetworkObject {
             Theme.CLICK_INFO.getColor() + "Next Page"
     );
 
-    private static final ItemStack CHANGE_SORT_STACK = ItemCreator.create(
-            Material.BLUE_STAINED_GLASS_PANE,
-            Theme.CLICK_INFO.getColor() + "Change Sort Order"
-    );
-
     private static final ItemStack FILTER_STACK = ItemCreator.create(
             Material.NAME_TAG,
             Theme.CLICK_INFO.getColor() + "Set Filter (Right Click to Clear)"
@@ -76,7 +71,10 @@ public abstract class AbstractGrid extends NetworkObject {
             }
     );
 
-    private static final Comparator<Map.Entry<ItemStack, Integer>> NUMERICAL_SORT = Map.Entry.comparingByValue();
+    private static final Comparator<Map.Entry<ItemStack, Integer>> COUNT_LOW_TO_HIGH_SORT =
+            Map.Entry.<ItemStack, Integer>comparingByValue().thenComparing(ALPHABETICAL_SORT);
+    private static final Comparator<Map.Entry<ItemStack, Integer>> COUNT_HIGH_TO_LOW_SORT =
+            Map.Entry.<ItemStack, Integer>comparingByValue().reversed().thenComparing(ALPHABETICAL_SORT);
 
     private final ItemSetting<Integer> tickRate;
 
@@ -233,9 +231,12 @@ public abstract class AbstractGrid extends NetworkObject {
 
     @Nonnull
     protected List<Map.Entry<ItemStack, Integer>> getEntries(@Nonnull NetworkRoot networkRoot, @Nonnull GridCache cache) {
-        return networkRoot.getAllNetworkItems().entrySet().stream()
+        final String filter = cache.getFilter();
+        final GridCache.SortOrder sortOrder = cache.getSortOrder();
+
+        return cache.getStableEntries(networkRoot.getAllNetworkItems()).entrySet().stream()
                 .filter(entry -> {
-                    if (cache.getFilter() == null) {
+                    if (filter == null) {
                         return true;
                     }
 
@@ -247,10 +248,19 @@ public abstract class AbstractGrid extends NetworkObject {
                             name = ChatColor.stripColor(itemMeta.getDisplayName().toLowerCase(Locale.ROOT));
                         }
                     }
-                    return name.contains(cache.getFilter());
+                    return name.contains(filter);
                 })
-                .sorted(cache.getSortOrder() == GridCache.SortOrder.ALPHABETICAL ? ALPHABETICAL_SORT : NUMERICAL_SORT.reversed())
+                .sorted(getComparator(sortOrder))
                 .toList();
+    }
+
+    @Nonnull
+    private Comparator<Map.Entry<ItemStack, Integer>> getComparator(@Nonnull GridCache.SortOrder sortOrder) {
+        return switch (sortOrder) {
+            case COUNT_LOW_TO_HIGH -> COUNT_LOW_TO_HIGH_SORT;
+            case COUNT_HIGH_TO_LOW, NUMBER -> COUNT_HIGH_TO_LOW_SORT;
+            case ALPHABETICAL -> ALPHABETICAL_SORT;
+        };
     }
 
     protected boolean setFilter(@Nonnull Player player, @Nonnull GridCache gridCache, @Nonnull ClickAction action) {
@@ -397,8 +407,12 @@ public abstract class AbstractGrid extends NetworkObject {
         return PAGE_NEXT_STACK;
     }
 
-    protected ItemStack getChangeSortStack() {
-        return CHANGE_SORT_STACK;
+    protected ItemStack getChangeSortStack(@Nonnull GridCache gridCache) {
+        return ItemCreator.create(
+                Material.BLUE_STAINED_GLASS_PANE,
+                Theme.CLICK_INFO.getColor() + "Sort: " + gridCache.getSortOrder().getDisplayName(),
+                Theme.CLICK_INFO + "Click: " + Theme.PASSIVE + "Switch to " + gridCache.getSortOrder().getNext().getDisplayName()
+        );
     }
 
     protected ItemStack getFilterStack() {

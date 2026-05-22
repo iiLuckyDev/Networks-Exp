@@ -2,6 +2,8 @@ package io.github.sefiraat.networks.network;
 
 import com.balugaq.netex.utils.BlockMenuUtil;
 import com.cryptomorin.xseries.particles.XParticle;
+import io.github.mooy1.infinityexpansion.infinitylib.common.PersistentType;
+import io.github.mooy1.infinityexpansion.infinitylib.core.AbstractAddon;
 import io.github.mooy1.infinityexpansion.items.storage.StorageCache;
 import io.github.mooy1.infinityexpansion.items.storage.StorageUnit;
 import io.github.sefiraat.networks.Networks;
@@ -25,6 +27,7 @@ import org.bukkit.Material;
 import org.bukkit.Warning;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,6 +39,8 @@ public class NetworkRoot extends NetworkNode {
     public static final int cacheMissThreshold = 15;
     public static final int reduceMs = 8000;
     public static final int transportMissThreshold = 120;
+    private static final int INFINITY_STORAGE_DISPLAY_SLOT = 13;
+    private static final int INFINITY_STORAGE_OUTPUT_SLOT = 16;
     public static final Map<Location, Map<Location, Integer /* Access times */>> observingAccessHistory =
             new ConcurrentHashMap<>();
     public static final Map<Location, Map<Location, Integer /* Cache miss times */>> persistentAccessHistory =
@@ -56,6 +61,8 @@ public class NetworkRoot extends NetworkNode {
     private final Set<Location> bridges = ConcurrentHashMap.newKeySet();
     @Getter
     private final Set<Location> circuitBreakers = ConcurrentHashMap.newKeySet();
+    @Getter
+    private final Set<Location> storageIndicators = ConcurrentHashMap.newKeySet();
     @Getter
     private final Set<Location> monitors = ConcurrentHashMap.newKeySet();
     @Getter
@@ -210,7 +217,7 @@ public class NetworkRoot extends NetworkNode {
     @Nullable
     public static InfinityBarrel getInfinityBarrel(
             @NotNull BlockMenu blockMenu, @NotNull StorageUnit storageUnit, boolean includeEmpty) {
-        final ItemStack itemStack = blockMenu.getItemInSlot(16);
+        final ItemStack itemStack = getInfinityStoredItem(blockMenu);
         final Config data = BlockStorage.getLocationInfo(blockMenu.getLocation());
         final String storedString = data.getString("stored");
 
@@ -240,6 +247,30 @@ public class NetworkRoot extends NetworkNode {
 
         return new InfinityBarrel(
                 blockMenu.getLocation(), clone, storedInt + (itemStack == null ? 0 : itemStack.getAmount()), cache);
+    }
+
+    @Nullable
+    private static ItemStack getInfinityStoredItem(@NotNull BlockMenu blockMenu) {
+        final ItemStack outputItem = blockMenu.getItemInSlot(INFINITY_STORAGE_OUTPUT_SLOT);
+        if (isItemPresent(outputItem)) {
+            return outputItem;
+        }
+
+        final ItemStack displayItem = blockMenu.getItemInSlot(INFINITY_STORAGE_DISPLAY_SLOT);
+        if (!isItemPresent(displayItem) || !displayItem.hasItemMeta()) {
+            return null;
+        }
+
+        try {
+            final ItemMeta itemMeta = displayItem.getItemMeta();
+            return itemMeta.getPersistentDataContainer().get(AbstractAddon.createKey("item"), PersistentType.ITEM_STACK_OLD);
+        } catch (RuntimeException | LinkageError ignored) {
+            return null;
+        }
+    }
+
+    private static boolean isItemPresent(@Nullable ItemStack itemStack) {
+        return itemStack != null && !itemStack.getType().isAir();
     }
 
     @Nullable
@@ -321,6 +352,7 @@ public class NetworkRoot extends NetworkNode {
             case CONTROLLER -> this.controller = location;
             case BRIDGE -> bridges.add(location);
             case CIRCUIT_BREAKER -> circuitBreakers.add(location);
+            case STORAGE_INDICATOR -> storageIndicators.add(location);
             case STORAGE_MONITOR -> monitors.add(location);
             case IMPORT -> importers.add(location);
             case EXPORT -> exporters.add(location);
@@ -500,6 +532,35 @@ public class NetworkRoot extends NetworkNode {
         }
 
         this.barrels = barrelSet;
+        return barrelSet;
+    }
+
+    @NotNull
+    public Set<BarrelIdentity> getObservedStorages(boolean includeEmpty) {
+        final Set<Location> addedLocations = new HashSet<>();
+        final Set<BarrelIdentity> barrelSet = new HashSet<>();
+
+        for (Location monitorLocation : this.monitors) {
+            final BlockFace face = NetworkDirectional.getSelectedFace(monitorLocation);
+
+            if (face == null) {
+                continue;
+            }
+
+            final Location testLocation = monitorLocation.clone().add(face.getDirection());
+
+            if (addedLocations.contains(testLocation)) {
+                continue;
+            }
+
+            addedLocations.add(testLocation);
+            final SlimefunItem slimefunItem = BlockStorage.check(testLocation);
+            final BarrelIdentity barrelIdentity = getMonitorBarrel(testLocation, slimefunItem, includeEmpty);
+            if (barrelIdentity != null) {
+                barrelSet.add(barrelIdentity);
+            }
+        }
+
         return barrelSet;
     }
 

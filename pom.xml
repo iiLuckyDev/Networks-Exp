@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.sefiraat</groupId>
     <artifactId>RoyaleNetworks</artifactId>
-    <version>v4</version>
+    <version>v13</version>
     <name>RoyaleNetworks</name>
 
     <distributionManagement>

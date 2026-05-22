@@ -15,8 +15,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NetworkGrid extends AbstractGrid {
 
@@ -40,7 +40,7 @@ public class NetworkGrid extends AbstractGrid {
     private static final int PAGE_PREVIOUS = 44;
     private static final int PAGE_NEXT = 53;
 
-    private static final Map<Location, GridCache> CACHE_MAP = new HashMap<>();
+    private static final Map<Location, GridCache> CACHE_MAP = new ConcurrentHashMap<>();
 
     public NetworkGrid(ItemGroup itemGroup, SlimefunItemStack item, RecipeType recipeType, ItemStack[] recipe) {
         super(itemGroup, item, recipeType, recipe);
@@ -89,15 +89,13 @@ public class NetworkGrid extends AbstractGrid {
                     return false;
                 });
 
-                menu.replaceExistingItem(getChangeSort(), getChangeSortStack());
+                menu.replaceExistingItem(getChangeSort(), getChangeSortStack(getCacheMap().get(menu.getLocation())));
                 menu.addMenuClickHandler(getChangeSort(), (p, slot, item, action) -> {
                     GridCache gridCache = getCacheMap().get(menu.getLocation());
-                    if (gridCache.getSortOrder() == GridCache.SortOrder.ALPHABETICAL) {
-                        gridCache.setSortOrder(GridCache.SortOrder.NUMBER);
-                    } else {
-                        gridCache.setSortOrder(GridCache.SortOrder.ALPHABETICAL);
-                    }
+                    gridCache.setSortOrder(gridCache.getSortOrder().getNext());
+                    gridCache.setPage(0);
                     getCacheMap().put(menu.getLocation(), gridCache);
+                    menu.replaceExistingItem(getChangeSort(), getChangeSortStack(gridCache));
                     return false;
                 });
 

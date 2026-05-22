@@ -4,6 +4,7 @@ public enum NodeType {
     CONTROLLER,
     BRIDGE,
     CIRCUIT_BREAKER,
+    STORAGE_INDICATOR,
     STORAGE_MONITOR,
     IMPORT,
     EXPORT,

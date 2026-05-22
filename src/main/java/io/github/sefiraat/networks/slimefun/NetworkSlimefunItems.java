@@ -49,6 +49,7 @@ public class NetworkSlimefunItems {
     public static final NetworkBridge NETWORK_BRIDGE_RED;
     public static final NetworkBridge NETWORK_BRIDGE_BLACK;
     public static final NetworkCircuitBreaker NETWORK_CIRCUIT_BREAKER;
+    public static final NetworkStorageIndicator NETWORK_STORAGE_INDICATOR;
     public static final NetworkMonitor NETWORK_MONITOR;
     public static final NetworkImport NETWORK_IMPORT;
     public static final NetworkExport NETWORK_EXPORT;
@@ -447,6 +448,17 @@ public class NetworkSlimefunItems {
                         NETWORK_BRIDGE.getItem(), OPTIC_CABLE.getItem(), NETWORK_BRIDGE.getItem(),
                         OPTIC_CABLE.getItem(), SlimefunItems.CARGO_MOTOR.getItem().getItem(), OPTIC_CABLE.getItem(),
                         NETWORK_BRIDGE.getItem(), OPTIC_CABLE.getItem(), NETWORK_BRIDGE.getItem()
+                )
+        );
+
+        NETWORK_STORAGE_INDICATOR = new NetworkStorageIndicator(
+                NetworksItemGroups.NETWORK_ITEMS,
+                NetworksSlimefunItemStacks.NETWORK_STORAGE_INDICATOR,
+                RecipeType.ENHANCED_CRAFTING_TABLE,
+                makeRecipe(
+                        OPTIC_GLASS.getItem(), new ItemStack(Material.REDSTONE_TORCH), OPTIC_GLASS.getItem(),
+                        OPTIC_CABLE.getItem(), NETWORK_MONITOR.getItem(), OPTIC_CABLE.getItem(),
+                        OPTIC_GLASS.getItem(), new ItemStack(Material.COMPARATOR), OPTIC_GLASS.getItem()
                 )
         );
 
@@ -1058,6 +1070,7 @@ public class NetworkSlimefunItems {
         NETWORK_BRIDGE_BLACK.register(plugin);
         NETWORK_CIRCUIT_BREAKER.register(plugin);
         NETWORK_MONITOR.register(plugin);
+        NETWORK_STORAGE_INDICATOR.register(plugin);
         NETWORK_IMPORT.register(plugin);
         NETWORK_EXPORT.register(plugin);
         NETWORK_GRABBER.register(plugin);

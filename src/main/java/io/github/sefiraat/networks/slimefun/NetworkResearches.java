@@ -52,6 +52,7 @@ public final class NetworkResearches {
                 NetworkSlimefunItems.OPTIC_STAR,
                 NetworkSlimefunItems.NETWORK_CONTROLLER,
                 NetworkSlimefunItems.NETWORK_CIRCUIT_BREAKER,
+                NetworkSlimefunItems.NETWORK_STORAGE_INDICATOR,
                 NetworkSlimefunItems.NETWORK_MONITOR,
                 NetworkSlimefunItems.NETWORK_GRID,
                 NetworkSlimefunItems.NETWORK_CELL,
